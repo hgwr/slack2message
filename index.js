@@ -35,9 +35,14 @@ app.event('message', async ({ event, context }) => {
       token: context.botToken,
       user: event.user,
     })
-    sendMessage(
-      `スラックから転送。 ${result.profile.display_name} 曰く、 ${event.text}`
-    )
+    let name = '名前取得できず'
+    if (result.profile && result.profile.real_name) {
+      name = result.profile.real_name
+    }
+    if (result.profile && result.profile.display_name) {
+      name = result.profile.display_name
+    }
+    sendMessage(`スラックから転送。 ${name} 曰く、 ${event.text}`)
   }
 })
 ;(async () => {
