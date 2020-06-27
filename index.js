@@ -38,7 +38,7 @@ const getName = async (token, user) => {
   if (result.profile && result.profile.display_name) {
     name = result.profile.display_name
   }
-  return name;
+  return name
 }
 
 app.event('message', async ({ event, context }) => {
@@ -47,17 +47,18 @@ app.event('message', async ({ event, context }) => {
   if (event.type != 'message') {
     return
   }
-  const name = getName(context.botToken, event.user)
+  const name = await getName(context.botToken, event.user)
   let text = event.text
-  if (event.subtype == "file_share") {
-    sendMessage(`スラックから転送。 ${name} がファイルを共有しました。ここには表示されません。`)
+  if (event.subtype == 'file_share') {
+    sendMessage(
+      `スラックから転送。 ${name} がファイルを共有しました。ここには表示されません。`
+    )
   } else if (event.text) {
     sendMessage(`スラックから転送。 ${name} 曰く、 ${text}`)
   } else {
     console.log(`[DEBUG] No message was sent.`)
   }
 })
-
 ;(async () => {
   // Start your app
   await app.start(process.env.PORT || 3000)
