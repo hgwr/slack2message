@@ -1,0 +1,14 @@
+{
+  "name": "slack2message",
+  "version": "0.0.1",
+  "description": "bridge between slack and message",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shigeru Hagiwara <hgwrsgr@gmail.com> (https://github.com/hgwr)",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^2.1.1"
+  }
+}
