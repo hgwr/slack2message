@@ -53,7 +53,8 @@ app.event('message', async ({ event, context }) => {
     sendMessage(
       `スラックから転送。 ${name} がファイルを共有しました。ここには表示されません。`
     )
-  } else if (event.text) {
+  }
+  if (event.text) {
     sendMessage(`スラックから転送。 ${name} 曰く、 ${text}`)
   } else {
     console.log(`[DEBUG] No message was sent.`)
