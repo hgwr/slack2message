@@ -1,6 +1,12 @@
 const { App } = require('@slack/bolt')
 const { spawn } = require('child_process')
 
+// Initializes your app with your bot token and signing secret
+const app = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+})
+
 const sendMessage = (message) => {
   // Note that the arguments are in an array, not using string interpolation
   const cmd = spawn('imessage', [
@@ -20,31 +26,38 @@ const sendMessage = (message) => {
   })
 }
 
-// Initializes your app with your bot token and signing secret
-const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-})
+const getName = async (token, user) => {
+  const result = await app.client.users.profile.get({
+    token: token,
+    user: user,
+  })
+  let name = '名前取得できず'
+  if (result.profile && result.profile.real_name) {
+    name = result.profile.real_name
+  }
+  if (result.profile && result.profile.display_name) {
+    name = result.profile.display_name
+  }
+  return name;
+}
 
 app.event('message', async ({ event, context }) => {
   console.log(event)
   // console.log(`${event.message.user} said ${message.text}`);
-  if (event.type && event.text && event.type == 'message') {
-    const result = await app.client.users.profile.get({
-      // The token you used to initialize your app is stored in the `context` object
-      token: context.botToken,
-      user: event.user,
-    })
-    let name = '名前取得できず'
-    if (result.profile && result.profile.real_name) {
-      name = result.profile.real_name
-    }
-    if (result.profile && result.profile.display_name) {
-      name = result.profile.display_name
-    }
-    sendMessage(`スラックから転送。 ${name} 曰く、 ${event.text}`)
+  if (event.type != 'message') {
+    return
+  }
+  const name = getName(context.botToken, event.user)
+  let text = event.text
+  if (event.subtype == "file_share") {
+    sendMessage(`スラックから転送。 ${name} がファイルを共有しました。ここには表示されません。`)
+  } else if (event.text) {
+    sendMessage(`スラックから転送。 ${name} 曰く、 ${text}`)
+  } else {
+    console.log(`[DEBUG] No message was sent.`)
   }
 })
+
 ;(async () => {
   // Start your app
   await app.start(process.env.PORT || 3000)
