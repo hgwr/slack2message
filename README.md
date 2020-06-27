@@ -23,6 +23,13 @@ Set the forwarding address or telephone number to `FORWARDED_FOR`.
 vi .envrc
 ```
 
+### Slack permissions
+
+- Event Subscriptions
+  - message.channels
+- Bot Token Scopes
+  - users.profile:read
+
 ## Running
 
 ```sh
