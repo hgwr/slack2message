@@ -28,7 +28,7 @@ app.event('message', async ({ event, context }) => {
   console.log(event)
   // console.log(`${event.message.user} said ${message.text}`);
   if (event.type && event.text && event.type == 'message') {
-    sendMessage(event.text)
+    sendMessage(`スラックから転送。${message.user}曰く「${event.text}」`)
   }
 })
 
