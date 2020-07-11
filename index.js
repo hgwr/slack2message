@@ -1,5 +1,7 @@
 const { App } = require('@slack/bolt')
 const { spawn } = require('child_process')
+const sqlite3 = require('sqlite3')
+const { open } = require('sqlite')
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -41,6 +43,86 @@ const getName = async (token, user) => {
   return name
 }
 
+async function dbConnection({ payload, context, say, next }) {
+  const slackUserId = payload.user
+
+  try {
+    const botDb = await open({
+      filename: './db/bot.db',
+      driver: sqlite3.Database,
+    })
+    context.botDb = botDb
+    const messageDb = await open({
+      filename: process.env.MESSAGE_DB_PATH,
+      driver: sqlite3.Database,
+    })
+    context.messageDb = messageDb
+  } catch (error) {
+    await say(
+      `Slack2message ボットです。エラー：このボットが使うデータベースに接続できませんでした。 <@${slackUserId}> `
+    )
+    console.log('エラー：このボットが使うデータベースに接続できませんでした。')
+    console.log(error)
+    return
+    // throw error;
+  }
+  await next()
+}
+
+app.use(dbConnection)
+
+const querySql = `
+select m.rowid,
+  guid,
+  text,
+  handle_id,
+  subject,
+  m.date
+from message m
+  inner join handle h on m.handle_id = h.rowid
+where h.id = ?
+  and m.is_from_me = 0
+order by date desc
+limit 100;
+    `
+
+const insertSql = `
+insert into message (guid, text, handle_id, subject, date)
+select :guid,
+  :text,
+  :handle_id,
+  :subject,
+  :date
+where not exists(
+    select 1
+    from message
+    where guid = :guid
+  )
+    `
+
+async function syncMessage({ context, next }) {
+  try {
+    const result = await context.messageDb.all(
+      querySql,
+      process.env.MONITORED_PHONE_NUMBER
+    )
+    result.forEach(async (row) => {
+      const insertResult = await context.botDb.run(insertSql, {
+        ':guid': row.guid,
+        ':text': row.text,
+        ':handle_id': row.handle_id,
+        ':subject': row.subject,
+        ':date': row.date
+      })
+    })
+  } catch (error) {
+    console.log('エラー：メッセージDBとボットDBを同期できませんでした。')
+    console.log(error)
+    throw error;
+  }
+  await next()
+}
+
 app.event('message', async ({ event, context }) => {
   console.log(event)
   // console.log(`${event.message.user} said ${message.text}`);
@@ -60,6 +142,8 @@ app.event('message', async ({ event, context }) => {
     console.log(`[DEBUG] No message was sent.`)
   }
 })
+
+// run main
 ;(async () => {
   // Start your app
   await app.start(process.env.PORT || 3000)
