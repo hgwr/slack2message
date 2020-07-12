@@ -4,3 +4,4 @@ export FORWARDED_FOR=''
 export PORT=3000
 export MESSAGE_DB_PATH=''
 export MONITORED_PHONE_NUMBER=''
+export SLACK_CHANNEL='general'
