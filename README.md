@@ -17,7 +17,10 @@ see https://slack.dev/bolt-js/tutorial/getting-started and create slack App.
 cp .envrc.exapme .envrc
 ```
 
-Set the forwarding address or telephone number to `FORWARDED_FOR`.
+- Set the forwarding address or telephone number to `FORWARDED_FOR`.
+- Set the message DB file to `MESSAGE_DB_PATH`. (ie. /Users/youraccount/Library/Messages/chat.db`)
+- Set monitored phone number to `MONITORED_PHONE_NUMBER` (ie.  `+8190XXXXYYYY`)
+- Set slack channel name to `SLACK_CHANNEL` for posting message from the phone (ie. `general`)
 
 ```sh
 vi .envrc
@@ -46,8 +49,10 @@ You get the public URL, so set the URL in Slack app "Event Subscriptions" page.
 
 ## Release History
 
-* 0.0.1
-    * CHANGE: Initial version
+- 0.0.1
+  - CHANGE: Initial version
+- 0.0.2
+  - CHANGE: Monitoring the SMS messages and posting the message to Slack.
 
 ## Meta
 
