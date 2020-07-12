@@ -39,7 +39,7 @@ select m.rowid,
 from message m
   inner join handle h on m.handle_id = h.rowid
 where h.id = ?
-  and (m.is_from_me = 1 or m.is_from_me = 0)
+  and m.is_from_me = 0
 order by m.date desc
 limit 10;
 `
