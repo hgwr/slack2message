@@ -4,14 +4,32 @@ A bridge between slack and message.
 
 ## Installation
 
+### npm install
+
+```sh
+npm install
+```
+
+### Install imessage-ruby
+
 OS X:
 
 ```sh
 brew install imessage-ruby
 git clone git@github.com:hgwr/slack2message.git
 ```
+### Create Slack app
 
 see https://slack.dev/bolt-js/tutorial/getting-started and create slack App.
+
+### Slack permissions
+
+- Event Subscriptions
+  - message.channels
+- Bot Token Scopes
+  - users.profile:read
+
+### Set .envrc with direnv
 
 ```sh
 cp .envrc.exapme .envrc
@@ -26,12 +44,13 @@ cp .envrc.exapme .envrc
 vi .envrc
 ```
 
-### Slack permissions
+### Create sqlite3 database for the bot
 
-- Event Subscriptions
-  - message.channels
-- Bot Token Scopes
-  - users.profile:read
+```sh
+sqlite3 db/bot.db
+sqlite> .read createBotDb.sql
+sqlite> .quit
+```
 
 ## Running
 
