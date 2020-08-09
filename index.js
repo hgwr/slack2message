@@ -1,6 +1,6 @@
 const { App } = require('@slack/bolt')
 const { spawn } = require('child_process')
-const { syncProcessLoop } = require ('./sync')
+const { syncProcessLoop } = require('./sync')
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -10,7 +10,7 @@ const app = new App({
 
 const sendMessage = (message) => {
   // Note that the arguments are in an array, not using string interpolation
-  console.log(new Date(), '[DEBUG] sending message: ', message);
+  console.log(new Date(), '[DEBUG] sending message: ', message)
   const cmd = spawn('imessage', [
     '--text',
     message,
@@ -65,10 +65,10 @@ app.event('message', async ({ event, context }) => {
 
 app.error((error) => {
   // メッセージ再送信もしくはアプリを停止するかの判断をするためにエラーの詳細を出力して確認
-  console.error(error);
-});
+  console.error(error)
+})
 
-app.use(syncProcessLoop(app));
+app.use(syncProcessLoop(app))
 
 // run main
 ;(async () => {

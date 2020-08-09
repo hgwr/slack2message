@@ -21,7 +21,10 @@ async function dbConnection(context) {
       context.messageDb = messageDb
     }
   } catch (error) {
-    console.log(new Date(), 'エラー：このボットが使うデータベースに接続できませんでした。')
+    console.log(
+      new Date(),
+      'エラー：このボットが使うデータベースに接続できませんでした。'
+    )
     console.log(error)
     throw error
   }
@@ -75,7 +78,10 @@ async function syncMessage(context) {
       processMessage(context, row)
     })
   } catch (error) {
-    console.log(new Date(), 'エラー：メッセージDBとボットDBを同期できませんでした。')
+    console.log(
+      new Date(),
+      'エラー：メッセージDBとボットDBを同期できませんでした。'
+    )
     console.log(error)
     throw error
   }
