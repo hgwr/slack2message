@@ -10,6 +10,7 @@ const app = new App({
 
 const sendMessage = (message) => {
   // Note that the arguments are in an array, not using string interpolation
+  console.log(new Date(), '[DEBUG] sending message: ', message);
   const cmd = spawn('imessage', [
     '--text',
     message,

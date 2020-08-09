@@ -21,7 +21,7 @@ async function dbConnection(context) {
       context.messageDb = messageDb
     }
   } catch (error) {
-    console.log('エラー：このボットが使うデータベースに接続できませんでした。')
+    console.log(new Date(), 'エラー：このボットが使うデータベースに接続できませんでした。')
     console.log(error)
     throw error
   }
@@ -65,7 +65,7 @@ insert into sent_message (guid, date) values (:guid, :date)
 `
 
 async function syncMessage(context) {
-  console.log('[INFO] sync message')
+  console.log(new Date(), '[INFO] sync message')
   try {
     const result = await context.messageDb.all(
       messageQuerySql,
@@ -75,7 +75,7 @@ async function syncMessage(context) {
       processMessage(context, row)
     })
   } catch (error) {
-    console.log('エラー：メッセージDBとボットDBを同期できませんでした。')
+    console.log(new Date(), 'エラー：メッセージDBとボットDBを同期できませんでした。')
     console.log(error)
     throw error
   }
@@ -95,7 +95,7 @@ async function processMessage(context, row) {
       ':guid': row.guid,
     })
     if (checkSentResult.num == 0) {
-      console.log(`[INFO] sending message ${row.text} to #general`)
+      console.log(new Date(), `[INFO] sending message ${row.text} to #general`)
       await app.client.chat.postMessage({
         token: context.botToken,
         channel: process.env.SLACK_CHANNEL,
@@ -115,7 +115,7 @@ function syncProcessLoop(_app) {
     if (!syncStarted) {
       syncStarted = true
       setInterval(async () => {
-        console.log(`[INFO] sync going...`)
+        console.log(new Date(), `[INFO] sync going...`)
         await dbConnection(context)
         await syncMessage(context)
         // await context.botDb.close()
